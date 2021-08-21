@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PCH_H_
+#define PCH_H_
 
 
 //General
@@ -35,3 +36,5 @@
 
 //platform api
 #include <Windows.h>
+
+#endif

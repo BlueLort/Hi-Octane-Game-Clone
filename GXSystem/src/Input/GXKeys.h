@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GX_KEYS_H_
+#define GX_KEYS_H_
 //from GX_keycode.h & GXK.h
 namespace gx {
 	namespace event {
@@ -277,3 +278,5 @@ namespace gx {
 
 
 }
+
+#endif

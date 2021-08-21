@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GX_WINDOW_H_
+#define GX_WINDOW_H_
+
 #include "Config/Config.h"
 namespace gx {
 	struct GXWindowData {
@@ -34,3 +36,5 @@ namespace gx {
 
 
 }
+
+#endif

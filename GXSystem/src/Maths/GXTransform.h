@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GX_TRANSFORM_H_
+#define GX_TRANSFORM_H_
+
 #include "GXMaths.h"
 namespace gx {
 
@@ -45,3 +47,5 @@ namespace gx {
 	};
 
 }
+
+#endif

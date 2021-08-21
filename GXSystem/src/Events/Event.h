@@ -1,4 +1,6 @@
-#pragma once
+#ifndef EVENT_H_
+#define EVENT_H_
+
 #include "Config/pch.h"
 #include <SDL/SDL_events.h>
 #define KeyValToSTR(K) (K) //map to input code map
@@ -86,3 +88,5 @@ namespace gx {
 	*/
 	}
 }
+
+#endif

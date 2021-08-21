@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CONFIG_H_
+#define CONFIG_H_
 
 #ifdef GX_ENABLE_ASSERTS
 #define GX_ASSERT(x, ...) { if(!(x)) { GX_FERROR("Assertion Failed: {0}\n{1}", __VA_ARGS__); __debugbreak(); } }
@@ -12,3 +13,5 @@
 
 //TODO ADD THIS TO USE VULKAN API 
 //#define USING_VULKAN_API
+
+#endif

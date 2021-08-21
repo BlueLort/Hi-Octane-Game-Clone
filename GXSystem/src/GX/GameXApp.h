@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GAME_X_APP_H_
+#define GAME_X_APP_H_
+
 #include "Config/Config.h"
 #include "Window/GXWindow.h"
 #include "GXTimer.h"
@@ -77,3 +79,5 @@ namespace gx {
 	}
 }
 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KEY_EVENT_H_
+#define KEY_EVENT_H_
 
 #include "Event.h"
 namespace gx {
@@ -50,3 +51,5 @@ namespace gx {
 	}
 
 }
+
+#endif

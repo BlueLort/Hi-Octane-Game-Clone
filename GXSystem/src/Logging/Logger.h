@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LOGGER_H_
+#define LOGGER_H_
+
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
@@ -32,3 +34,5 @@ namespace gx {
 	};
 }
 
+
+#endif

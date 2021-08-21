@@ -1,4 +1,6 @@
-#pragma once
+#ifndef INPUT_MANAGER_H_
+#define INPUT_MANAGER_H_
+
 #include "Config/pch.h"
 #include "GXKeys.h"
 #include "Window/GXWindow.h"
@@ -95,3 +97,5 @@ namespace gx {
 	}
 
 }
+
+#endif

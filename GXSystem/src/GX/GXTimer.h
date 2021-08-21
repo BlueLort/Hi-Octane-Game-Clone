@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GX_TIMER_H_
+#define GX_TIMER_H_
+
 namespace gx {
 	class GXTimer {//Class to calculate delta time and ticks between frames using whatever windowing API
 	public:
@@ -22,3 +24,5 @@ namespace gx {
 
 	};
 }
+
+#endif

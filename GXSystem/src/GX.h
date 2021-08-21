@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GX_H_
+#define GX_H_
+
 #include "GX/GXTypes.h"
 #include "GX/GameXApp.h"
 #include "GX/GXTimer.h"
@@ -9,3 +11,4 @@
 
 #include "GX/Entry.h"
 
+#endif

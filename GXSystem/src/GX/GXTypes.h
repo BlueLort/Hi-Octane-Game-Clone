@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GX_TYPES_H_
+#define GX_TYPES_H_
+
 /* General type declarations used throughout the Engine */
 
 typedef	char	             GXint8;
@@ -17,3 +19,6 @@ typedef bool			     GXBool;
 //TODO insert types here when needed
 /* Function declaration return types */
 //TODO insert types here when needed
+
+
+#endif

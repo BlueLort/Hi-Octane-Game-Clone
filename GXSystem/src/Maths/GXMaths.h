@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GX_MATHS_H_
+#define GX_MATHS_H_
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -106,3 +108,5 @@ using GXuVec2 = glm::uvec2;
 		}
 	};
 }
+
+#endif

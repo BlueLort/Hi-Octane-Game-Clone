@@ -1,4 +1,6 @@
-#pragma once
+#ifndef WINDOW_EVENT_H_
+#define WINDOW_EVENT_H_
+
 #include "Event.h"
 namespace gx {
 	namespace event {
@@ -82,3 +84,5 @@ namespace gx {
 	}
 
 }
+
+#endif

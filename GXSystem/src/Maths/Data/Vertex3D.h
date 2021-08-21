@@ -1,4 +1,6 @@
-#pragma once
+#ifndef VERTEX3D_H_
+#define VERTEX3D_H_
+
 #include "Maths/GXMaths.h"
 namespace gx {
 	struct Vertex3D {
@@ -48,3 +50,5 @@ namespace gx {
 		}
 	};
 }
+
+#endif

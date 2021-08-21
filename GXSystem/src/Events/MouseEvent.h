@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MOUSE_EVENT_H_
+#define MOUSE_EVENT_H_
 
 #include "Event.h"
 namespace gx {
@@ -87,3 +88,5 @@ namespace gx {
 	}
 
 }
+
+#endif

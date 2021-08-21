@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PERLIN_NOISE_H_
+#define PERLIN_NOISE_H_
+
 #include "Maths/GXMaths.h"
 
 namespace gx {
@@ -67,3 +69,5 @@ namespace gx {
 
 
 }
+
+#endif  

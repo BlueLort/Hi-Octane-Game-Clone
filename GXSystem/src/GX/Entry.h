@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ENTRY_H_
+#define ENTRY_H_
+
 inline void InitSystems(gx::GameXApp* gameInst);
 inline void DestroySystems(gx::GameXApp* gameInst);
 GXint32 main(GXint32 argc, char** argv) {
@@ -42,3 +44,6 @@ void DestroySystems(gx::GameXApp* gameInst) {
 
 
 }
+
+
+#endif
