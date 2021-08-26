@@ -9,9 +9,13 @@ outputDir = "%{cfg.system}-%{cfg.architecture}-%{cfg.buildcfg}"
 includeDir = {}
 includeDir["Deps"]  = "GXSystem/Deps/include"
 includeDir["thirdparty"] = "GXSystem/Third-Party"
+includeDir["Vulkan"] = "%VULKAN_SDK%/Include"
 
 libDir = {}
 libDir["SDL_Windows"] = "GXSystem/Deps/lib/SDL2-2.0.16/Windows/x64"
+libDir["Vulkan"] = "%VULKAN_SDK%/Lib"
+
+-- Todo(Harlequin): add SDL support for linux
 libDir["SDL_Linux"] = ""
 
 configurations
@@ -84,13 +88,15 @@ project "GXSystem"
     {
         "%{prj.name}/src",
         "%{includeDir.Deps}",
-        "%{includeDir.thirdparty}"
+        "%{includeDir.thirdparty}",
+        "%{includeDir.Vulkan}"
     }
 
     links
     {
         "SDL2",
-        "SDL2main"
+        "SDL2main",
+        "vulkan-1"
     }
 
     defines
@@ -100,6 +106,11 @@ project "GXSystem"
 
     targetdir ("bin/" .. outputDir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputDir .. "/%{prj.name}")
+
+    libdirs
+    {
+        "%{libDir.Vulkan}"
+    }
 
 filter "system:windows"
 
