@@ -118,12 +118,15 @@
     <ClInclude Include="src\Maths\GXTransform.h" />
     <ClInclude Include="src\Maths\Random\PerlinNoise.h" />
     <ClInclude Include="src\Platform\GXWindow.h" />
+    <ClInclude Include="src\Renderer\Renderer.h" />
+    <ClInclude Include="src\Renderer\RendererTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\GX\GameXApp.cpp" />
     <ClCompile Include="src\Game\game.cpp" />
     <ClCompile Include="src\Logging\Logger.cpp" />
     <ClCompile Include="src\Platform\GXWindow.cpp" />
+    <ClCompile Include="src\Renderer\Renderer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
