@@ -2,7 +2,7 @@
 #define GAME_X_APP_H_
 
 #include "Config/Config.h"
-#include "Window/GXWindow.h"
+#include "Platform/GXWindow.h"
 #include "GXTimer.h"
 #include "Events/WindowEvent.h"
 #include "Input/InputManager.h"

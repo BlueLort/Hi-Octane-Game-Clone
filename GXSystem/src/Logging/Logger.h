@@ -4,7 +4,6 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-
 #define GXE_PRINT(...) gx::Logger::GetEngineLogger()->trace(__VA_ARGS__)
 #define GXE_INFO(...) gx::Logger::GetEngineLogger()->info(__VA_ARGS__)
 #define GXE_DEBUG(...) gx::Logger::GetEngineLogger()->debug(__VA_ARGS__)
@@ -33,6 +32,5 @@ namespace gx {
 		static std::shared_ptr<spdlog::logger> game_logger_;
 	};
 }
-
 
 #endif

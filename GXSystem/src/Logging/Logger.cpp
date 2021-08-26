@@ -1,7 +1,6 @@
 #include "Config/pch.h"
 #include "Logger.h"
 
-
 namespace gx {
 	std::shared_ptr<spdlog::logger> Logger::engine_logger_ = nullptr;
 	std::shared_ptr<spdlog::logger> Logger::game_logger_ = nullptr;
@@ -15,6 +14,4 @@ namespace gx {
 
 	}
 
-
 }
-

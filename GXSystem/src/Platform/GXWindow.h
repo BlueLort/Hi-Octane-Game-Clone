@@ -2,6 +2,8 @@
 #define GX_WINDOW_H_
 
 #include "Config/Config.h"
+#include <SDL/SDL.h>
+
 namespace gx {
 	struct GXWindowData {
 		GXuint32 width;

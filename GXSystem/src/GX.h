@@ -7,7 +7,7 @@
 #include "Logging/Logger.h"
 #include "Maths/GXMaths.h"
 #include "Input/InputManager.h"
-#include "Window/GXWindow.h"
+#include "Platform/GXWindow.h"
 
 #include "GX/Entry.h"
 

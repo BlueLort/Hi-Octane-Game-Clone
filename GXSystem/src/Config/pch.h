@@ -1,7 +1,6 @@
 #ifndef PCH_H_
 #define PCH_H_
 
-
 //General
 #include <iostream>
 #include <string>
@@ -30,11 +29,5 @@
 #include "GX/GXTypes.h"
 #include "GX/GXConstants.h"
 #include "Logging/Logger.h"
-//third party
-#include <SDL/SDL.h>
-
-
-//platform api
-#include <Windows.h>
 
 #endif

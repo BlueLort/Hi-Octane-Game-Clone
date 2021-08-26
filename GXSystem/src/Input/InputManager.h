@@ -3,7 +3,7 @@
 
 #include "Config/pch.h"
 #include "GXKeys.h"
-#include "Window/GXWindow.h"
+#include "Platform/GXWindow.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
 namespace gx {

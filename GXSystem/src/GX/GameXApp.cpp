@@ -8,8 +8,8 @@
  DispatchSystemEvent<##ev>(gxEvent,windowID)
 
 namespace gx {
-	bool GameXApp::is_running_ = true;
 
+	bool GameXApp::is_running_ = true;
 
 	GameXApp::GameXApp() {
 
@@ -20,16 +20,15 @@ namespace gx {
 	}
 
 	void GameXApp::Start() {
-		//TODO do RAY PICKING WITH PHYSICS ENGINE ?
-		//rayPickingTask = std::async(std::launch::async, rayPicking);
+		// TODO do RAY PICKING WITH PHYSICS ENGINE ?
+		// rayPickingTask = std::async(std::launch::async, rayPicking);
 		while (is_running_) {
 			GXFloat deltaTime = 1.0f / GXTimer::GetAppTimer().GetDeltaTicks();
 			GXTimer::GetAppTimer().Update();
 			InputManager::GetInstance().Update();
-			while (GXPollEvents(&GX_SDLEvent()) == 1);//Send events to callback
-			//GXWindow::swapWindow();
-
-
+			GX_SDLEvent event;
+			while (GXPollEvents(&event) == 1); //Send events to callback
+			// GXWindow::swapWindow();
 		}
 	}
 
