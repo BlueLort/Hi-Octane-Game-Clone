@@ -117,14 +117,14 @@ namespace gx {
 
     void VulkanShutdown()
     {
+        VulkanDestroyDevice(&context.device);
+        vkDestroySurfaceKHR(context.instance, context.surface, nullptr);
 
 #if GX_VULKAN_DEBUG
         auto destroyDebugUtilsMessenger = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(context.instance, "vkDestroyDebugUtilsMessengerEXT");
         destroyDebugUtilsMessenger(context.instance, context.debug_messenger, nullptr);
 #endif // GX_VULKAN_DEBUG
 
-        VulkanDestroyDevice(&context.device);
-        vkDestroySurfaceKHR(context.instance, context.surface, nullptr);
         vkDestroyInstance(context.instance, nullptr);
     }
 
