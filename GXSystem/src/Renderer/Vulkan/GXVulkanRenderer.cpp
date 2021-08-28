@@ -1,5 +1,6 @@
 #include "GXVulkanRenderer.h"
 #include "GXVulkanTypes.h"
+#include "GXVulkanDevice.h"
 
 #include "Logging/Logger.h"
 #include "Platform/GXWindow.h"
@@ -90,6 +91,21 @@ namespace gx {
             return false;
         }
 
+        GXVulkanDeviceRequirements requirements;
+        requirements.has_graphics_queue = true;
+        requirements.has_present_queue = true;
+        requirements.has_compute_queue = true;
+        requirements.has_transfer_queue = true;
+        requirements.has_sampler_anisotropy = true;
+        requirements.is_discrete = true;
+        requirements.extensions = { "VK_KHR_swapchain" };
+
+        if (!VulkanCreateDevice(&context, &requirements, &context.device))
+        {
+            GXE_ERROR("failed to vulkan device.");
+            return false;
+        }
+
         GXE_INFO("Vulkan Renderer Initialized Successfully.");
 
         ApiFunctions->begin_frame = &VulkanBeginFrame;
@@ -107,6 +123,8 @@ namespace gx {
         destroyDebugUtilsMessenger(context.instance, context.debug_messenger, nullptr);
 #endif // GX_VULKAN_DEBUG
 
+        VulkanDestroyDevice(&context.device);
+        vkDestroySurfaceKHR(context.instance, context.surface, nullptr);
         vkDestroyInstance(context.instance, nullptr);
     }
 

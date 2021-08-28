@@ -120,6 +120,7 @@
     <ClInclude Include="src\Platform\GXWindow.h" />
     <ClInclude Include="src\Renderer\GXRenderer.h" />
     <ClInclude Include="src\Renderer\GXRendererTypes.h" />
+    <ClInclude Include="src\Renderer\Vulkan\GXVulkanDevice.h" />
     <ClInclude Include="src\Renderer\Vulkan\GXVulkanRenderer.h" />
     <ClInclude Include="src\Renderer\Vulkan\GXVulkanTypes.h" />
   </ItemGroup>
@@ -129,6 +130,7 @@
     <ClCompile Include="src\Logging\Logger.cpp" />
     <ClCompile Include="src\Platform\GXWindow.cpp" />
     <ClCompile Include="src\Renderer\GXRenderer.cpp" />
+    <ClCompile Include="src\Renderer\Vulkan\GXVulkanDevice.cpp" />
     <ClCompile Include="src\Renderer\Vulkan\GXVulkanRenderer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
