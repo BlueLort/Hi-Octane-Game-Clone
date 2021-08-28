@@ -44,4 +44,7 @@ namespace gx {
 #endif
         }
     }
+
+    GXRendererAPI GXRenderer::api_;
+    GXRendererAPIFunctions GXRenderer::api_functions_;
 }

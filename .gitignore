@@ -1,8 +1,6 @@
-/x64/
-/bin-int/
-/bin/
-/.vs/
-
+**/bin/
+bin-int/
+.vs/
 **.sln
 **.vcxproj
 **.vcxproj.filters

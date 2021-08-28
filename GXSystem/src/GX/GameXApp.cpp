@@ -1,7 +1,6 @@
 #include "Config/pch.h"
 #include "GameXApp.h"
 
-
 //IGNORE EVENTS DEBUGGING DATA FOR NOW
 
 #define DISPATCH_EVENT(ev,windowID,...) std::shared_ptr<##ev> gxEvent = std::make_shared<##ev>(__VA_ARGS__);\
@@ -20,15 +19,16 @@ namespace gx {
 	}
 
 	void GameXApp::Start() {
-		// TODO do RAY PICKING WITH PHYSICS ENGINE ?
-		// rayPickingTask = std::async(std::launch::async, rayPicking);
 		while (is_running_) {
 			GXFloat deltaTime = 1.0f / GXTimer::GetAppTimer().GetDeltaTicks();
 			GXTimer::GetAppTimer().Update();
 			InputManager::GetInstance().Update();
 			GX_SDLEvent event;
-			while (GXPollEvents(&event) == 1); //Send events to callback
-			// GXWindow::swapWindow();
+			while (GXPollEvents(&event)); //Send events to callback
+			
+			GXRenderer::BeginFrame();
+			// Do Rendering here
+			GXRenderer::EndFrame();
 		}
 	}
 

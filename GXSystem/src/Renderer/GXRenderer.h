@@ -7,29 +7,31 @@ namespace gx {
 
     class GXRenderer {
     public:
-        GXBool Init(GXRendererAPI Api);
-        void Shutdown();
+        GXRenderer() = delete;
 
-        const GXRendererAPI& GetAPI() { return api_; }
+        static GXBool Init(GXRendererAPI Api);
+        static void Shutdown();
 
-        inline bool BeginFrame()
+        static const GXRendererAPI& GetAPI() { return api_; }
+
+        inline static void BeginFrame()
         {
-            return api_functions_.begin_frame();
+            api_functions_.begin_frame();
         }
 
-        inline void EndFrame()
+        inline static void EndFrame()
         {
             api_functions_.end_frame();
         }
 
-        inline void OnResize(GXuint32 Width, GXuint32 Height)
+        inline static void OnResize(GXuint32 Width, GXuint32 Height)
         {
             api_functions_.on_resize(Width, Height);
         }
 
     private:
-        GXRendererAPI api_;
-        GXRendererAPIFunctions api_functions_;
+        static GXRendererAPI api_;
+        static GXRendererAPIFunctions api_functions_;
     };
 }
 

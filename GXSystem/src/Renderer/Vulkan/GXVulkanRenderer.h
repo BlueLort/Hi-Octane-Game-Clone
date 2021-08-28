@@ -3,6 +3,8 @@
 
 #include "Renderer/GXRendererTypes.h"
 
+#define GX_VULKAN_DEBUG 1
+
 namespace gx {
 
     bool VulkanInit(GXRendererAPIFunctions *ApiFunctions);

@@ -6,7 +6,10 @@
 #include "GXTimer.h"
 #include "Events/WindowEvent.h"
 #include "Input/InputManager.h"
+#include "Renderer/GXRenderer.h"
+
 #define GXPRINTF(...) (gx::LayerManager::getInstance().GXPrintf(__VA_ARGS__));
+
 namespace gx {
 	//adapt it to whatever API im using.
 	using GX_SDLEvent = SDL_Event;

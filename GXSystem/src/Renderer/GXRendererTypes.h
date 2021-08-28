@@ -9,7 +9,7 @@ enum class GXRendererAPI : GXuint8 {
 };
 
 struct GXRendererAPIFunctions {
-    GXBool (*begin_frame)();
+    void (*begin_frame)();
     void (*end_frame)();
     void (*on_resize)(GXuint32 Width, GXuint32 Height);
 };
