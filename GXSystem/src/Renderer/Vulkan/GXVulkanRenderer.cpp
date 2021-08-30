@@ -1,6 +1,7 @@
 #include "GXVulkanRenderer.h"
 #include "GXVulkanTypes.h"
 #include "GXVulkanDevice.h"
+#include "GXVulkanSwapChain.h"
 
 #include "Logging/Logger.h"
 #include "Platform/GXWindow.h"
@@ -92,9 +93,10 @@ namespace gx {
         }
 
         GXVulkanDeviceRequirements requirements;
+        
         requirements.has_graphics_queue = true;
-        requirements.has_present_queue = true;
-        requirements.has_compute_queue = true;
+        requirements.has_present_queue  = true;
+        requirements.has_compute_queue  = true;
         requirements.has_transfer_queue = true;
         requirements.has_sampler_anisotropy = true;
         requirements.is_discrete = true;
@@ -102,7 +104,17 @@ namespace gx {
 
         if (!VulkanCreateDevice(&context, &requirements, &context.device))
         {
-            GXE_ERROR("failed to vulkan device.");
+            GXE_ERROR("failed to create vulkan device.");
+            return false;
+        }
+
+        GXint32 windowWidth, windowHeight;
+        SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+
+        VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR; // Todo:(Harlequin): v-sync for now we need to support triple buffering
+        if (!VulkanCreateSwapchain(&context, &context.swapchain, windowWidth, windowHeight, presentMode))
+        {
+            GXE_ERROR("failed to create vulkan swapchain.");
             return false;
         }
 
@@ -117,8 +129,9 @@ namespace gx {
 
     void VulkanShutdown()
     {
-        VulkanDestroyDevice(&context.device);
+        VulkanDestroySwapchain(&context, &context.swapchain);
         vkDestroySurfaceKHR(context.instance, context.surface, nullptr);
+        VulkanDestroyDevice(&context.device);
 
 #if GX_VULKAN_DEBUG
         auto destroyDebugUtilsMessenger = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(context.instance, "vkDestroyDebugUtilsMessengerEXT");

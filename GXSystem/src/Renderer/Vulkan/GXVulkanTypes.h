@@ -2,6 +2,8 @@
 #define GX_VULKAN_TYPES_H_
 
 #include "GX/GXTypes.h"
+
+#include <vector>
 #include <vulkan/vulkan.h>
 
 struct GXVulkanQueueFamilyIndices {
@@ -27,10 +29,22 @@ struct GXVulkanDevice {
     VkQueue transfer_queue;
 };
 
+struct GXVulkanSwapchain {
+    VkSwapchainKHR handle;
+    VkFormat format;
+    VkPresentModeKHR present_mode;
+    std::vector<VkImage> images;
+    std::vector<VkImageView> image_views;
+};
+
 struct GXVulkanContext {
     VkInstance instance;
     VkSurfaceKHR surface;
     GXVulkanDevice device;
+    GXVulkanSwapchain swapchain;
+
+    GXuint32 framebuffer_width;
+    GXuint32 framebuffer_height;
 
     VkDebugUtilsMessengerEXT debug_messenger;
 };
