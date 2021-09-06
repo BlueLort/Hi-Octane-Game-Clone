@@ -80,7 +80,13 @@ namespace gx {
 			virtual inline GXuint32 GetEventClass() const override {return (GXEventClass::GX_APPLICATION);}
 			virtual inline GXuint32 GetEventType() const override { return GXEventType::GX_WINDOW_CLOSE; }
 		};
-
+		class WindowRestoredEvent : public WindowEvent {
+		public:
+			WindowRestoredEvent(GXuint32 WindowID) : WindowEvent(WindowID) {}
+			virtual inline const char* GetName() const override { return "WINDOW_RESOTRED"; }
+			virtual inline GXuint32 GetEventClass() const override { return (GXEventClass::GX_APPLICATION); }
+			virtual inline GXuint32 GetEventType() const override { return GXEventType::GX_WINDOW_RESTORED; }
+		};
 	}
 
 }

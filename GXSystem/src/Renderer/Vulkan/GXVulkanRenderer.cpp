@@ -13,19 +13,94 @@
 namespace gx {
     
     static GXVulkanContext context;
+    static GXuint32 cached_width;
+    static GXuint32 cached_height;
 
-    static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity, VkDebugUtilsMessageTypeFlagsEXT message_type, const VkDebugUtilsMessengerCallbackDataEXT* callback_data, void* user_data);
+    static VkBool32 VulkanDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity, VkDebugUtilsMessageTypeFlagsEXT message_type, const VkDebugUtilsMessengerCallbackDataEXT* callback_data, void* user_data);
     
+    static void RecreateSwapchain()
+    {
+        VulkanRecreateSwapchain(&context, &context.swapchain, cached_width, cached_height, context.swapchain.present_mode);
+
+        for (GXuint32 i = 0; i < context.frame_buffers.size(); i++)
+        {
+            VulkanDestroyFrameBuffer(&context, &context.frame_buffers[i]);
+            VulkanCreateFrameBuffer(&context, &context.render_pass, &context.swapchain.image_views[i], &context.frame_buffers[i]);
+        }
+    }
+
     static void VulkanBeginFrame()
     {
+        vkWaitForFences(context.device.logical, 1, &context.render_fence, true, 1000000000);
+        vkResetFences(context.device.logical, 1, &context.render_fence);
+
+        if ((cached_width != context.framebuffer_width || cached_height != context.framebuffer_height) && cached_width != 0 && cached_height != 0)
+        {
+            context.framebuffer_width = cached_width;
+            context.framebuffer_height = cached_height;
+
+            RecreateSwapchain();
+        }
+
+        VulkanAcquireNextImageIndex(&context, &context.swapchain, context.present_semaphore, &context.swapchain_image_index);
+
+        vkResetCommandBuffer(context.graphics_buffer, 0);
+        VkCommandBufferBeginInfo cmdBufferBeginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
+        cmdBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+        vkBeginCommandBuffer(context.graphics_buffer, &cmdBufferBeginInfo);
+
+        VkClearValue clearValue;
+        clearValue.color = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+        VkRenderPassBeginInfo renderPassBeginInfo = { VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
+        renderPassBeginInfo.renderPass = context.render_pass;
+        renderPassBeginInfo.renderArea.offset.x = 0;
+        renderPassBeginInfo.renderArea.offset.y = 0;
+        renderPassBeginInfo.renderArea.extent.width = context.framebuffer_width;
+        renderPassBeginInfo.renderArea.extent.height = context.framebuffer_height;
+        renderPassBeginInfo.framebuffer = context.frame_buffers[context.swapchain_image_index];
+        renderPassBeginInfo.clearValueCount = 1;
+        renderPassBeginInfo.pClearValues = &clearValue;
+
+        vkCmdBeginRenderPass(context.graphics_buffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
     }
 
     static void VulkanEndFrame()
     {
+        vkCmdEndRenderPass(context.graphics_buffer);
+        vkEndCommandBuffer(context.graphics_buffer);
+
+        VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
+        
+        VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        submitInfo.pWaitDstStageMask = &waitStage;
+
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = &context.present_semaphore;
+
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = &context.render_semaphore;
+
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &context.graphics_buffer;
+
+        vkQueueSubmit(context.device.graphics_queue, 1, &submitInfo, context.render_fence);
+
+        VkPresentInfoKHR presentInfo = { VK_STRUCTURE_TYPE_PRESENT_INFO_KHR };
+        presentInfo.swapchainCount = 1;
+        presentInfo.pSwapchains = &context.swapchain.handle;
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pWaitSemaphores = &context.render_semaphore;
+        presentInfo.pImageIndices = &context.swapchain_image_index;
+
+        vkQueuePresentKHR(context.device.graphics_queue, &presentInfo);
     }
 
     static void VulkanOnResize(GXuint32 Width, GXuint32 Height)
     {
+        cached_width = Width;
+        cached_height = Height;
     }
 
     bool VulkanInit(GXRendererAPIFunctions* ApiFunctions)
@@ -115,6 +190,8 @@ namespace gx {
 
         context.framebuffer_width = windowWidth;
         context.framebuffer_height = windowHeight;
+        cached_width = windowWidth;
+        cached_height = windowHeight;
 
         // Todo:(Harlequin): v-sync for now we need to support triple buffering
         VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
@@ -154,6 +231,36 @@ namespace gx {
             return false;
         }
 
+        VkFenceCreateInfo fenceCreateInfo = { VK_STRUCTURE_TYPE_FENCE_CREATE_INFO };
+        fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+        VkResult result = vkCreateFence(context.device.logical, &fenceCreateInfo, nullptr, &context.render_fence);
+
+        if (result != VK_SUCCESS)
+        {
+            GXE_ERROR("failed to create render fence.");
+            return false;
+        }
+
+        VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
+        semaphoreCreateInfo.flags = 0;
+
+        result = vkCreateSemaphore(context.device.logical, &semaphoreCreateInfo, nullptr, &context.render_semaphore);
+
+        if (result != VK_SUCCESS)
+        {
+            GXE_ERROR("failed to create render semaphore.");
+            return false;
+        }
+
+        result = vkCreateSemaphore(context.device.logical, &semaphoreCreateInfo, nullptr, &context.present_semaphore);
+
+        if (result != VK_SUCCESS)
+        {
+            GXE_ERROR("failed to create present semaphore.");
+            return false;
+        }
+
         GXE_INFO("Vulkan Renderer Initialized Successfully.");
 
         ApiFunctions->begin_frame = &VulkanBeginFrame;
@@ -165,6 +272,14 @@ namespace gx {
 
     void VulkanShutdown()
     {
+        vkDeviceWaitIdle(context.device.logical);
+
+        vkDestroyFence(context.device.logical, context.render_fence, nullptr);
+        vkDestroySemaphore(context.device.logical, context.render_semaphore, nullptr);
+        vkDestroySemaphore(context.device.logical, context.present_semaphore, nullptr);
+
+        VulkanDestroyCommandPool(&context, &context.graphics_pool);
+
         for (GXuint32 i = 0; i < context.frame_buffers.size(); i++)
         {
             VulkanDestroyFrameBuffer(&context, &context.frame_buffers[i]);
@@ -183,7 +298,7 @@ namespace gx {
         vkDestroyInstance(context.instance, nullptr);
     }
 
-    VkBool32 VKAPI_CALL VulkanDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity, VkDebugUtilsMessageTypeFlagsEXT message_type, const VkDebugUtilsMessengerCallbackDataEXT* callback_data, void* user_data)
+    VkBool32 VulkanDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT message_severity, VkDebugUtilsMessageTypeFlagsEXT message_type, const VkDebugUtilsMessengerCallbackDataEXT* callback_data, void* user_data)
     {
         if (message_severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
         {

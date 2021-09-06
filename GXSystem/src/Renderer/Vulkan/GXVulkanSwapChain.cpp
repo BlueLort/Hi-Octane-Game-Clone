@@ -24,7 +24,6 @@ namespace gx {
         vkGetPhysicalDeviceSurfacePresentModesKHR(Context->device.physical, Context->surface, &presentModeCount, presentModes.data());
 
         // Todo(Harlequin): make sure the swapchain present mode is supported
-
         GXuint32 imageCount = surfaceCapabilities.minImageCount + 1;
         
         if (surfaceCapabilities.maxImageCount > 0 && imageCount > surfaceCapabilities.maxImageCount)
@@ -126,9 +125,9 @@ namespace gx {
         return isRecreationSuccessful;
     }
 
-    bool VulkanAcquireNextImageIndex(GXVulkanContext* Context, GXVulkanSwapchain* Swapchain, GXuint64 TimeoutNS, VkSemaphore ImageAvailable, VkFence Fence, GXuint32 *OutImageIndex)
+    bool VulkanAcquireNextImageIndex(GXVulkanContext* Context, GXVulkanSwapchain* Swapchain, VkSemaphore ImageAvailable, GXuint32 *OutImageIndex)
     {
-        VkResult result = vkAcquireNextImageKHR(Context->device.logical, Swapchain->handle, TimeoutNS, ImageAvailable, Fence, OutImageIndex);
+        VkResult result = vkAcquireNextImageKHR(Context->device.logical, Swapchain->handle, 1000000000, ImageAvailable, nullptr, OutImageIndex);
         
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
@@ -139,7 +138,7 @@ namespace gx {
                 return false;
             }
         }
-        else if (result != VK_SUCCESS || result != VK_SUBOPTIMAL_KHR)
+        else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
         {
             GXE_ERROR("failed to acquire swapchain image index.");
             return false;

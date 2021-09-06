@@ -3,19 +3,19 @@
 
 //IGNORE EVENTS DEBUGGING DATA FOR NOW
 
-#define DISPATCH_EVENT(ev,windowID,...) std::shared_ptr<##ev> gxEvent = std::make_shared<##ev>(__VA_ARGS__);\
- DispatchSystemEvent<##ev>(gxEvent,windowID)
+#define DISPATCH_EVENT(ev, windowID, ...) std::shared_ptr<##ev> gxEvent = std::make_shared<##ev>(__VA_ARGS__);\
+ DispatchSystemEvent<##ev>(gxEvent, windowID)
 
 namespace gx {
 
 	bool GameXApp::is_running_ = true;
+	bool GameXApp::is_suspended_ = false;
 
 	GameXApp::GameXApp() {
 
 	}
 
 	GameXApp::~GameXApp() {
-
 	}
 
 	void GameXApp::Start() {
@@ -26,9 +26,11 @@ namespace gx {
 			GX_SDLEvent event;
 			while (GXPollEvents(&event)); //Send events to callback
 			
-			GXRenderer::BeginFrame();
-			// Do Rendering here
-			GXRenderer::EndFrame();
+			if (!is_suspended_)
+			{
+				GXRenderer::BeginFrame();
+				GXRenderer::EndFrame();
+			}
 		}
 	}
 
@@ -39,21 +41,40 @@ namespace gx {
 		std::string eventName;
 		switch (Event->type) {
 		case SDL_QUIT:
-		{DISPATCH_EVENT(gx::event::WindowCloseEvent, Event->window.windowID, 0); }
+		{
+			DISPATCH_EVENT(gx::event::WindowCloseEvent, Event->window.windowID, 0);
+		}
 		break;
 		case gx::event::GXEventClass::GX_APPLICATION:
 			switch (Event->window.event) {
 			case gx::event::GXEventType::GX_WINDOW_CLOSE:
-			{DISPATCH_EVENT(gx::event::WindowCloseEvent, Event->window.windowID, Event->window.windowID); }
+			{
+				DISPATCH_EVENT(gx::event::WindowCloseEvent, Event->window.windowID, Event->window.windowID); 
+			}
 			break;
 			case gx::event::GXEventType::GX_WINDOW_RESIZE:
-			{DISPATCH_EVENT(gx::event::WindowResizeEvent, Event->window.windowID, Event->window.data1, Event->window.data2, Event->window.windowID); }
+			{
+				GXRenderer::OnResize(Event->window.data1, Event->window.data2);
+				DISPATCH_EVENT(gx::event::WindowResizeEvent, Event->window.windowID, Event->window.data1, Event->window.data2, Event->window.windowID); 
+			}
 			break;
 			case gx::event::GXEventType::GX_WINDOW_MINIMIZE:
-			{DISPATCH_EVENT(gx::event::WindowMinimizeEvent, Event->window.windowID, Event->window.data1, Event->window.data2, Event->window.windowID); }
+			{
+				is_suspended_ = true;
+				DISPATCH_EVENT(gx::event::WindowMinimizeEvent, Event->window.windowID, Event->window.data1, Event->window.data2, Event->window.windowID);
+			}
 			break;
 			case gx::event::GXEventType::GX_WINDOW_MAXIMIZE:
-			{DISPATCH_EVENT(gx::event::WindowMaximizeEvent, Event->window.windowID, Event->window.data1, Event->window.data2, Event->window.windowID); }
+			{
+				DISPATCH_EVENT(gx::event::WindowMaximizeEvent, Event->window.windowID, Event->window.data1, Event->window.data2, Event->window.windowID);
+			}
+			break;
+
+			case gx::event::GXEventType::GX_WINDOW_RESTORED:
+			{
+				is_suspended_ = false;
+				DISPATCH_EVENT(gx::event::WindowRestoredEvent, Event->window.windowID, Event->window.windowID);
+			}
 			break;
 			}
 			break;

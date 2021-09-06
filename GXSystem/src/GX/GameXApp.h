@@ -35,7 +35,7 @@ namespace gx {
 		template<class T>
 		inline static GXint32 HandleEvent(std::shared_ptr<T>& Event) { return 0; }
 		static bool is_running_;
-		
+		static bool is_suspended_;
 		
 
 	};

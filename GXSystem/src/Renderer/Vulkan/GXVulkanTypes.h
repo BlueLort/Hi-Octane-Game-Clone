@@ -53,6 +53,12 @@ struct GXVulkanContext {
 
     std::vector<VkFramebuffer> frame_buffers;
 
+    VkFence render_fence;
+    VkSemaphore render_semaphore;
+    VkSemaphore present_semaphore;
+
+    GXuint32 swapchain_image_index;
+
     VkDebugUtilsMessengerEXT debug_messenger;
 };
 
