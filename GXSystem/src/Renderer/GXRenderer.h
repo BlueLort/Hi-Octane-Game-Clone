@@ -12,7 +12,7 @@ namespace gx {
         static GXBool Init(GXRendererAPI Api);
         static void Shutdown();
 
-        static const GXRendererAPI& GetAPI() { return api_; }
+        inline static const GXRendererAPI& GetAPI() { return api_; }
 
         inline static void BeginFrame()
         {

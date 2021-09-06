@@ -43,8 +43,15 @@ struct GXVulkanContext {
     GXVulkanDevice device;
     GXVulkanSwapchain swapchain;
 
+    VkCommandPool graphics_pool;
+    VkCommandBuffer graphics_buffer;
+
+    VkRenderPass render_pass;
+
     GXuint32 framebuffer_width;
     GXuint32 framebuffer_height;
+
+    std::vector<VkFramebuffer> frame_buffers;
 
     VkDebugUtilsMessengerEXT debug_messenger;
 };

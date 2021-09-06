@@ -2,6 +2,8 @@
 #include "GXVulkanTypes.h"
 #include "GXVulkanDevice.h"
 #include "GXVulkanSwapChain.h"
+#include "GXVulkanRenderPass.h"
+#include "GXVulkanCommandBuffers.h"
 
 #include "Logging/Logger.h"
 #include "Platform/GXWindow.h"
@@ -111,10 +113,44 @@ namespace gx {
         GXint32 windowWidth, windowHeight;
         SDL_GetWindowSize(window, &windowWidth, &windowHeight);
 
-        VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR; // Todo:(Harlequin): v-sync for now we need to support triple buffering
+        context.framebuffer_width = windowWidth;
+        context.framebuffer_height = windowHeight;
+
+        // Todo:(Harlequin): v-sync for now we need to support triple buffering
+        VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
         if (!VulkanCreateSwapchain(&context, &context.swapchain, windowWidth, windowHeight, presentMode))
         {
             GXE_ERROR("failed to create vulkan swapchain.");
+            return false;
+        }
+
+        if (!VulkanCreateRenderPass(&context, &context.render_pass))
+        {
+            GXE_ERROR("failed to create vulkan render pass.");
+            return false;
+        }
+
+        auto imageCount = static_cast<GXuint32>(context.swapchain.images.size());
+        context.frame_buffers.resize(imageCount);
+
+        for (GXuint32 i = 0; i < imageCount; i++)
+        {
+            if (!VulkanCreateFrameBuffer(&context, &context.render_pass, &context.swapchain.image_views[i], &context.frame_buffers[i]))
+            {
+                GXE_ERROR("failed to create vulkan framebuffer.");
+                return false;
+            }
+        }
+
+        if (!VulkanCreateCommandPool(&context, context.device.queue_family_indices.graphics_queue_family_index, &context.graphics_pool))
+        {
+            GXE_ERROR("failed to create graphics command pool.");
+            return false;
+        }
+
+        if (!VulkanAllocateCommandBuffer(&context, &context.graphics_pool, &context.graphics_buffer))
+        {
+            GXE_ERROR("failed to create graphics command buffer.");
             return false;
         }
 
@@ -129,6 +165,12 @@ namespace gx {
 
     void VulkanShutdown()
     {
+        for (GXuint32 i = 0; i < context.frame_buffers.size(); i++)
+        {
+            VulkanDestroyFrameBuffer(&context, &context.frame_buffers[i]);
+        }
+
+        VulkanDestroyRenderPass(&context, &context.render_pass);
         VulkanDestroySwapchain(&context, &context.swapchain);
         vkDestroySurfaceKHR(context.instance, context.surface, nullptr);
         VulkanDestroyDevice(&context.device);

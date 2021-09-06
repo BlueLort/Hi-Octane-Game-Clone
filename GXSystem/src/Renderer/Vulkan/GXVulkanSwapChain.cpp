@@ -23,6 +23,8 @@ namespace gx {
         std::vector<VkPresentModeKHR> presentModes(presentModeCount);
         vkGetPhysicalDeviceSurfacePresentModesKHR(Context->device.physical, Context->surface, &presentModeCount, presentModes.data());
 
+        // Todo(Harlequin): make sure the swapchain present mode is supported
+
         GXuint32 imageCount = surfaceCapabilities.minImageCount + 1;
         
         if (surfaceCapabilities.maxImageCount > 0 && imageCount > surfaceCapabilities.maxImageCount)
