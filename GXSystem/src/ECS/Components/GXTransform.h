@@ -4,7 +4,7 @@
 #include "GXMaths.h"
 namespace gx {
 
-	class GXTransform {
+	struct GXTransform {
 	public:
 		
 		GXTransform() :

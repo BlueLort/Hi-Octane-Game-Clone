@@ -122,7 +122,7 @@
     <ClInclude Include="src\Logging\Logger.h" />
     <ClInclude Include="src\Maths\Data\Vertex3D.h" />
     <ClInclude Include="src\Maths\GXMaths.h" />
-    <ClInclude Include="src\Maths\GXTransform.h" />
+    <ClInclude Include="src\ECS\Components\GXTransform.h" />
     <ClInclude Include="src\Maths\Random\PerlinNoise.h" />
     <ClInclude Include="src\Platform\GXWindow.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
