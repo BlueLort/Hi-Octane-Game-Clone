@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{69026542-55CF-BF4D-7EE8-ADF56A14F5DB}</ProjectGuid>
+    <ProjectGuid>{A039D130-C9DB-4A57-967B-A9F232757ABF}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GXSystem</RootNamespace>
@@ -98,6 +98,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\ECS\ECSManager.h" />
+    <ClInclude Include="src\ECS\Components\GXComponent.h" />
+    <ClInclude Include="src\ECS\ECSConfig.h" />
+    <ClInclude Include="src\ECS\Entity\GXEntityManager.h" />
+    <ClInclude Include="src\ECS\Systems\GXEntitySystem.h" />
+    <ClInclude Include="src\ECS\Systems\GXSystemManager.h" />
+    <ClInclude Include="src\Game\ResourceManager\IOManager.h" />
     <ClInclude Include="src\Config\Config.h" />
     <ClInclude Include="src\Config\pch.h" />
     <ClInclude Include="src\Events\Event.h" />
@@ -122,6 +129,12 @@
     <ClInclude Include="src\Renderer\RendererTypes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ECS\ECSManager.cc" />
+    <ClCompile Include="src\ECS\Components\GXComponent.cc" />
+    <ClCompile Include="src\ECS\Entity\GXEntityManager.cc" />
+    <ClCompile Include="src\ECS\Systems\GXEntitySystem.cc" />
+    <ClCompile Include="src\ECS\Systems\GXSystemManager.cc" />
+    <ClCompile Include="src\Game\ResourceManager\IOManager.cc" />
     <ClCompile Include="src\GX\GameXApp.cpp" />
     <ClCompile Include="src\Game\game.cpp" />
     <ClCompile Include="src\Logging\Logger.cpp" />

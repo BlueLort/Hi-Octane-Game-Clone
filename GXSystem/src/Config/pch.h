@@ -21,6 +21,8 @@
 #include <string.h>
 #include <map>
 #include <random>
+#include <bitset>
+#include <set>
 //Threading
 #include <thread>
 #include <mutex>

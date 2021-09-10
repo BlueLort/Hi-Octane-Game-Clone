@@ -14,6 +14,9 @@ typedef	unsigned long long GXuint64;
 typedef float			    GXFloat;
 typedef double			   GXDouble;
 typedef bool			     GXBool;
+//For ECS
+typedef GXuint32		   GXEntity;
+typedef	GXuint8			GXComponentType;
 
 /* GX-specific types */
 //TODO insert types here when needed
