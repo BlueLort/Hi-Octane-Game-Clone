@@ -4,6 +4,8 @@
 #include "GXVulkanSwapChain.h"
 #include "GXVulkanRenderPass.h"
 #include "GXVulkanCommandBuffers.h"
+#include "GXVulkanShader.h"
+#include "GXVulkanPipeline.h"
 
 #include "Logging/Logger.h"
 #include "Platform/GXWindow.h"
@@ -29,6 +31,17 @@ namespace gx {
         }
     }
 
+    static void RecreatePipeline()
+    {
+        VulkanDestroyPipeline(&context, &context.pipeline);
+
+        GXPipelineCreateInfo pipelineCreateInfo;
+        pipelineCreateInfo.vertex_shader   = &context.vertex_shader;
+        pipelineCreateInfo.fragment_shader = &context.fragment_shader;
+
+        VulkanCreatePipeline(&context, &pipelineCreateInfo, &context.pipeline);
+    }
+
     static void VulkanBeginFrame()
     {
         vkWaitForFences(context.device.logical, 1, &context.render_fence, true, 1000000000);
@@ -40,6 +53,7 @@ namespace gx {
             context.framebuffer_height = cached_height;
 
             RecreateSwapchain();
+            RecreatePipeline();
         }
 
         VulkanAcquireNextImageIndex(&context, &context.swapchain, context.present_semaphore, &context.swapchain_image_index);
@@ -64,6 +78,8 @@ namespace gx {
         renderPassBeginInfo.pClearValues = &clearValue;
 
         vkCmdBeginRenderPass(context.graphics_buffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindPipeline(context.graphics_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline.handle);
+        vkCmdDraw(context.graphics_buffer, 3, 1, 0, 0);
     }
 
     static void VulkanEndFrame()
@@ -263,6 +279,25 @@ namespace gx {
 
         GXE_INFO("Vulkan Renderer Initialized Successfully.");
 
+        if (!VulkanLoadShaderModule(&context, "Assets/Shaders/Compiled/triangle.vert.spv", &context.vertex_shader))
+        {
+            return false;
+        }
+
+        if (!VulkanLoadShaderModule(&context, "Assets/Shaders/Compiled/triangle.frag.spv", &context.fragment_shader))
+        {
+            return false;
+        }
+
+        GXPipelineCreateInfo pipelineCreateInfo;
+        pipelineCreateInfo.vertex_shader   = &context.vertex_shader;
+        pipelineCreateInfo.fragment_shader = &context.fragment_shader;
+
+        if (!VulkanCreatePipeline(&context, &pipelineCreateInfo, &context.pipeline))
+        {
+            return false;
+        }
+
         ApiFunctions->begin_frame = &VulkanBeginFrame;
         ApiFunctions->end_frame   = &VulkanEndFrame;
         ApiFunctions->on_resize   = &VulkanOnResize;
@@ -273,6 +308,10 @@ namespace gx {
     void VulkanShutdown()
     {
         vkDeviceWaitIdle(context.device.logical);
+
+        VulkanDestroyPipeline(&context, &context.pipeline);
+        VulkanDestroyShaderModule(&context, &context.vertex_shader);
+        VulkanDestroyShaderModule(&context, &context.fragment_shader);
 
         vkDestroyFence(context.device.logical, context.render_fence, nullptr);
         vkDestroySemaphore(context.device.logical, context.render_semaphore, nullptr);

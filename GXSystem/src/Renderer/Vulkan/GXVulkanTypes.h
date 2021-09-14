@@ -37,6 +37,11 @@ struct GXVulkanSwapchain {
     std::vector<VkImageView> image_views;
 };
 
+struct GXVulkanPipeline {
+    VkPipeline handle;
+    VkPipelineLayout layout;
+};
+
 struct GXVulkanContext {
     VkInstance instance;
     VkSurfaceKHR surface;
@@ -58,6 +63,11 @@ struct GXVulkanContext {
     VkSemaphore present_semaphore;
 
     GXuint32 swapchain_image_index;
+
+    GXVulkanPipeline pipeline;
+
+    VkShaderModule vertex_shader;
+    VkShaderModule fragment_shader;
 
     VkDebugUtilsMessengerEXT debug_messenger;
 };
