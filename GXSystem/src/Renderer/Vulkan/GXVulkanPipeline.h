@@ -9,6 +9,9 @@ namespace gx {
     {
         VkShaderModule* vertex_shader;
         VkShaderModule* fragment_shader;
+
+        std::vector<VkVertexInputBindingDescription> vertex_input_bindings;
+        std::vector<VkVertexInputAttributeDescription> vertex_input_attributes;
     };
 
     bool VulkanCreatePipeline(GXVulkanContext *Context, const GXPipelineCreateInfo *CreateInfo, GXVulkanPipeline *OutPipeline);

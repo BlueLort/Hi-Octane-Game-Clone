@@ -25,8 +25,11 @@ namespace gx {
         // Vertex Input State
 
         VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO };
-        vertexInputStateCreateInfo.vertexBindingDescriptionCount = 0;
-        vertexInputStateCreateInfo.vertexAttributeDescriptionCount = 0;
+        vertexInputStateCreateInfo.vertexBindingDescriptionCount = CreateInfo->vertex_input_bindings.size();
+        vertexInputStateCreateInfo.pVertexBindingDescriptions = CreateInfo->vertex_input_bindings.data();
+
+        vertexInputStateCreateInfo.vertexAttributeDescriptionCount = CreateInfo->vertex_input_attributes.size();
+        vertexInputStateCreateInfo.pVertexAttributeDescriptions = CreateInfo->vertex_input_attributes.data();
 
         // Input Assembly
 

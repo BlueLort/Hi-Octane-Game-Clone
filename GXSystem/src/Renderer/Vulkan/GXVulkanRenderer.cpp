@@ -6,15 +6,48 @@
 #include "GXVulkanCommandBuffers.h"
 #include "GXVulkanShader.h"
 #include "GXVulkanPipeline.h"
+#include "GXVulkanBuffers.h"
 
 #include "Logging/Logger.h"
 #include "Platform/GXWindow.h"
 
+#define VMA_IMPLEMENTATION
+#include <amd/vk_mem_alloc.h>
+
 #include <SDL/SDL_Vulkan.h>
+
+#include <glm/glm.hpp>
 
 namespace gx {
     
+    // TODO(Harlequin): Temporary
+    struct GXMeshVertex
+    {
+        glm::vec3 position;
+        glm::vec4 color;
+    };
+
+    // TODO(Harlequin): Temporary
+    struct GXMesh
+    {
+        GXuint32 vertex_count;
+        GXMeshVertex* vertices;
+        GXVulkanVertexBuffer vertex_buffer;
+    };
+
+    // TODO(Harlequin): Temporary
+    struct GXRendererData {
+        GXMesh triangle_mesh;
+
+        VkShaderModule vertex_shader;
+        VkShaderModule fragment_shader;
+
+        GXPipelineCreateInfo pipeline_create_info;
+    };
+
     static GXVulkanContext context;
+    static GXRendererData renderer_data;
+
     static GXuint32 cached_width;
     static GXuint32 cached_height;
 
@@ -34,12 +67,7 @@ namespace gx {
     static void RecreatePipeline()
     {
         VulkanDestroyPipeline(&context, &context.pipeline);
-
-        GXPipelineCreateInfo pipelineCreateInfo;
-        pipelineCreateInfo.vertex_shader   = &context.vertex_shader;
-        pipelineCreateInfo.fragment_shader = &context.fragment_shader;
-
-        VulkanCreatePipeline(&context, &pipelineCreateInfo, &context.pipeline);
+        VulkanCreatePipeline(&context, &renderer_data.pipeline_create_info, &context.pipeline);
     }
 
     static void VulkanBeginFrame()
@@ -79,7 +107,11 @@ namespace gx {
 
         vkCmdBeginRenderPass(context.graphics_buffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindPipeline(context.graphics_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline.handle);
-        vkCmdDraw(context.graphics_buffer, 3, 1, 0, 0);
+
+        VkDeviceSize offset = 0;
+        vkCmdBindVertexBuffers(context.graphics_buffer, 0, 1, &renderer_data.triangle_mesh.vertex_buffer.buffer, &offset);
+
+        vkCmdDraw(context.graphics_buffer, renderer_data.triangle_mesh.vertex_count, 1, 0, 0);
     }
 
     static void VulkanEndFrame()
@@ -115,7 +147,7 @@ namespace gx {
 
     static void VulkanOnResize(GXuint32 Width, GXuint32 Height)
     {
-        cached_width = Width;
+        cached_width  = Width;
         cached_height = Height;
     }
 
@@ -201,16 +233,24 @@ namespace gx {
             return false;
         }
 
+        VmaAllocatorCreateInfo allocatorCreateInfo = {};
+        allocatorCreateInfo.physicalDevice = context.device.physical;
+        allocatorCreateInfo.device = context.device.logical;
+        allocatorCreateInfo.instance = context.instance;
+
+        vmaCreateAllocator(&allocatorCreateInfo, &context.allocator);
+
         GXint32 windowWidth, windowHeight;
         SDL_GetWindowSize(window, &windowWidth, &windowHeight);
 
         context.framebuffer_width = windowWidth;
         context.framebuffer_height = windowHeight;
-        cached_width = windowWidth;
+        cached_width  = windowWidth;
         cached_height = windowHeight;
 
         // Todo:(Harlequin): v-sync for now we need to support triple buffering
         VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
+
         if (!VulkanCreateSwapchain(&context, &context.swapchain, windowWidth, windowHeight, presentMode))
         {
             GXE_ERROR("failed to create vulkan swapchain.");
@@ -277,26 +317,70 @@ namespace gx {
             return false;
         }
 
-        GXE_INFO("Vulkan Renderer Initialized Successfully.");
-
-        if (!VulkanLoadShaderModule(&context, "Assets/Shaders/Compiled/triangle.vert.spv", &context.vertex_shader))
+        if (!VulkanLoadShaderModule(&context, "Assets/Shaders/Compiled/triangle.vert.spv", &renderer_data.vertex_shader))
         {
             return false;
         }
 
-        if (!VulkanLoadShaderModule(&context, "Assets/Shaders/Compiled/triangle.frag.spv", &context.fragment_shader))
+        if (!VulkanLoadShaderModule(&context, "Assets/Shaders/Compiled/triangle.frag.spv", &renderer_data.fragment_shader))
         {
             return false;
         }
 
         GXPipelineCreateInfo pipelineCreateInfo;
-        pipelineCreateInfo.vertex_shader   = &context.vertex_shader;
-        pipelineCreateInfo.fragment_shader = &context.fragment_shader;
+        pipelineCreateInfo.vertex_shader   = &renderer_data.vertex_shader;
+        pipelineCreateInfo.fragment_shader = &renderer_data.fragment_shader;
 
-        if (!VulkanCreatePipeline(&context, &pipelineCreateInfo, &context.pipeline))
+        VkVertexInputBindingDescription mainBinding = {};
+        mainBinding.binding = 0;
+        mainBinding.stride = sizeof(GXMeshVertex);
+        mainBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+        pipelineCreateInfo.vertex_input_bindings =
+        {
+            mainBinding
+        };
+
+        VkVertexInputAttributeDescription positionAttribute = {};
+        positionAttribute.binding = 0;
+        positionAttribute.location = 0;
+        positionAttribute.format = VK_FORMAT_R32G32B32_SFLOAT;
+        positionAttribute.offset = offsetof(GXMeshVertex, GXMeshVertex::position);
+
+        VkVertexInputAttributeDescription colorAttribute = {};
+        colorAttribute.binding = 0;
+        colorAttribute.location = 1;
+        colorAttribute.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+        colorAttribute.offset = offsetof(GXMeshVertex, GXMeshVertex::color);
+
+        pipelineCreateInfo.vertex_input_attributes =
+        {
+            positionAttribute,
+            colorAttribute
+        };
+
+        renderer_data.pipeline_create_info = pipelineCreateInfo;
+
+        // TODO(Harlequin): Memory System we are using new for now
+        GXMesh* triangleMesh = &renderer_data.triangle_mesh;
+        triangleMesh->vertex_count = 3;
+        triangleMesh->vertices = new GXMeshVertex[triangleMesh->vertex_count];
+        triangleMesh->vertices[0] = { glm::vec3(1.0f, 1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) };
+        triangleMesh->vertices[1] = { glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) };
+        triangleMesh->vertices[2] = { glm::vec3(0.0f, -1.0f, 0.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) };
+
+        if (!VulkanCreateVertexBuffer(&context, reinterpret_cast<GXFloat*>(triangleMesh->vertices), sizeof(GXMeshVertex) * triangleMesh->vertex_count, &triangleMesh->vertex_buffer))
+        {
+            GXE_ERROR("failed to create mesh vertex buffer");
+            return false;
+        }
+
+        if (!VulkanCreatePipeline(&context, &renderer_data.pipeline_create_info, &context.pipeline))
         {
             return false;
         }
+
+        GXE_INFO("Vulkan Renderer Initialized Successfully.");
 
         ApiFunctions->begin_frame = &VulkanBeginFrame;
         ApiFunctions->end_frame   = &VulkanEndFrame;
@@ -310,8 +394,9 @@ namespace gx {
         vkDeviceWaitIdle(context.device.logical);
 
         VulkanDestroyPipeline(&context, &context.pipeline);
-        VulkanDestroyShaderModule(&context, &context.vertex_shader);
-        VulkanDestroyShaderModule(&context, &context.fragment_shader);
+        VulkanDestroyShaderModule(&context, &renderer_data.vertex_shader);
+        VulkanDestroyShaderModule(&context, &renderer_data.fragment_shader);
+        VulkanDestroyVertexBuffer(&context, &renderer_data.triangle_mesh.vertex_buffer);
 
         vkDestroyFence(context.device.logical, context.render_fence, nullptr);
         vkDestroySemaphore(context.device.logical, context.render_semaphore, nullptr);

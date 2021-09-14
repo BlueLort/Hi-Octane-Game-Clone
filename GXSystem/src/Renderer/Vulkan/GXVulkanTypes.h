@@ -3,8 +3,10 @@
 
 #include "GX/GXTypes.h"
 
-#include <vector>
 #include <vulkan/vulkan.h>
+#include <amd/vk_mem_alloc.h>
+
+#include <vector>
 
 struct GXVulkanQueueFamilyIndices {
     GXint32 graphics_queue_family_index;
@@ -42,10 +44,18 @@ struct GXVulkanPipeline {
     VkPipelineLayout layout;
 };
 
+struct GXVulkanVertexBuffer {
+    VkBuffer buffer;
+    VmaAllocation allocation;
+};
+
 struct GXVulkanContext {
     VkInstance instance;
     VkSurfaceKHR surface;
     GXVulkanDevice device;
+
+    VmaAllocator allocator;
+
     GXVulkanSwapchain swapchain;
 
     VkCommandPool graphics_pool;
@@ -65,9 +75,6 @@ struct GXVulkanContext {
     GXuint32 swapchain_image_index;
 
     GXVulkanPipeline pipeline;
-
-    VkShaderModule vertex_shader;
-    VkShaderModule fragment_shader;
 
     VkDebugUtilsMessengerEXT debug_messenger;
 };
