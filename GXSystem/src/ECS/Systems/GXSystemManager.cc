@@ -2,34 +2,8 @@
 #include "GXSystemManager.h"
 
 namespace gx {
-	template<typename T>
-	inline std::shared_ptr<T> GXSystemManager::RegisterSystem()
-	{
-		const char* typeName = typeid(T).name();
-		auto ite = systems_.find(typeName);
-		if (ite != systems_.end()) {
-			GXE_ERROR("Can't register same system [{0}] more than once.", typeName);
-			return;
-		}
-
-		auto system = std::make_shared<T>();
-		systems_.insert({ typeName, system });
-		GXE_INFO("System {0} is registered.", typeName);
-		return system;
-	}
-	template<typename T>
-	inline void GXSystemManager::SetMask(GXComponentMask mask)
-	{
-		const char* typeName = typeid(T).name();
-		auto ite = systems_.find(typeName);
-		if (ite == systems_.end()) {
-			GXE_ERROR("System {0} is not registered.", typeName);
-			return;
-		}
-
-		systems_mask_.insert({ typeName, mask });
-	}
-	inline void GXSystemManager::EntityDestroyed(GXEntity entityId)
+	
+	void GXSystemManager::EntityDestroyed(GXEntity entityId)
 	{
 		for (auto const& ite : systems_)
 		{
@@ -38,7 +12,7 @@ namespace gx {
 			system->entites_managed_.erase(entityId);
 		}
 	}
-	inline void GXSystemManager::EntityMaskChanged(GXEntity entityId, GXComponentMask entityMask)
+	void GXSystemManager::EntityMaskChanged(GXEntity entityId, GXComponentMask entityMask)
 	{
 		for (auto const& ite : systems_)
 		{

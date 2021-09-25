@@ -98,11 +98,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\ECS\Components\Actual\GXGravity.h" />
+    <ClInclude Include="src\ECS\Components\Actual\GXRigidBody.h" />
+    <ClInclude Include="src\ECS\Components\GXComponentArray.h" />
     <ClInclude Include="src\ECS\ECSManager.h" />
-    <ClInclude Include="src\ECS\Components\GXComponent.h" />
+    <ClInclude Include="src\ECS\Components\GXComponentManager.h" />
     <ClInclude Include="src\ECS\ECSConfig.h" />
     <ClInclude Include="src\ECS\Entity\GXEntityManager.h" />
     <ClInclude Include="src\ECS\Systems\GXEntitySystem.h" />
+    <ClInclude Include="src\ECS\Systems\Actual\GXPhysicsSystem.h" />
     <ClInclude Include="src\ECS\Systems\GXSystemManager.h" />
     <ClInclude Include="src\Game\ResourceManager\IOManager.h" />
     <ClInclude Include="src\Config\Config.h" />
@@ -122,17 +126,16 @@
     <ClInclude Include="src\Logging\Logger.h" />
     <ClInclude Include="src\Maths\Data\Vertex3D.h" />
     <ClInclude Include="src\Maths\GXMaths.h" />
-    <ClInclude Include="src\ECS\Components\GXTransform.h" />
+    <ClInclude Include="src\ECS\Components\Actual\GXTransform.h" />
     <ClInclude Include="src\Maths\Random\PerlinNoise.h" />
     <ClInclude Include="src\Platform\GXWindow.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\RendererTypes.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ECS\ECSManager.cc" />
-    <ClCompile Include="src\ECS\Components\GXComponent.cc" />
+    <ClCompile Include="src\ECS\Components\GXComponentManager.cc" />
     <ClCompile Include="src\ECS\Entity\GXEntityManager.cc" />
-    <ClCompile Include="src\ECS\Systems\GXEntitySystem.cc" />
+    <ClCompile Include="src\ECS\Systems\Actual\GXPhysicsSystem.cc" />
     <ClCompile Include="src\ECS\Systems\GXSystemManager.cc" />
     <ClCompile Include="src\Game\ResourceManager\IOManager.cc" />
     <ClCompile Include="src\GX\GameXApp.cpp" />

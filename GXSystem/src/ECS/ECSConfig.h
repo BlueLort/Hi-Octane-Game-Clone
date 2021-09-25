@@ -1,6 +1,7 @@
 #ifndef ECS_CONFIG_H
 #define ECS_CONFIG_H
 #include "GX/GXTypes.h"
+#include "Config/Config.h"
 #include <bitset>
 namespace gx {
 	const GXEntity		  MAX_ENTITIES = 1024;

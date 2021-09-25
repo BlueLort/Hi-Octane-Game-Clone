@@ -18,10 +18,10 @@ namespace gx {
 	public:
 		GameXApp();
 		virtual ~GameXApp();
-		void Start();
+		virtual void Start();
 		GXEventCallBack GetEventCallBack() const { return OnEvent; }
 		//static std::unique_ptr<Renderer> renderer;
-	private:
+	protected:
 		
 		//EVENT HANDLING
 		static GXint32 OnEvent(void* userdata, GX_SDLEvent* Event);

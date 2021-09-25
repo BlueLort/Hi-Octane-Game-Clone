@@ -20,15 +20,12 @@ namespace gx {
 	}
 
 	void GameXApp::Start() {
-		// TODO do RAY PICKING WITH PHYSICS ENGINE ?
-		// rayPickingTask = std::async(std::launch::async, rayPicking);
 		while (is_running_) {
 			GXFloat deltaTime = 1.0f / GXTimer::GetAppTimer().GetDeltaTicks();
 			GXTimer::GetAppTimer().Update();
 			InputManager::GetInstance().Update();
 			GX_SDLEvent event;
 			while (GXPollEvents(&event) == 1); //Send events to callback
-			// GXWindow::swapWindow();
 		}
 	}
 

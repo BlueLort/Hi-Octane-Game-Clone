@@ -5,7 +5,7 @@ namespace gx {
 	class GXEntityManager
 	{
 	public:
-		GXEntityManager()
+		GXEntityManager(): live_entity_count_(0)
 		{
 			for (GXEntity entity = 0; entity < MAX_ENTITIES; entity++)
 			{
