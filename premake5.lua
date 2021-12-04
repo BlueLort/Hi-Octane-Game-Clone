@@ -13,6 +13,10 @@ includeDir["thirdparty"] = "GXSystem/Third-Party"
 libDir = {}
 libDir["SDL_Windows"] = "GXSystem/Deps/lib/SDL2-2.0.16/Windows/x64"
 libDir["SDL_Linux"] = ""
+libDir["BulletDebug"] = "GXSystem/Deps/lib/Bullet/x64/Debug"
+libDir["AssimpDebug"] = "GXSystem/Deps/lib/Assimp/x64/Debug"
+libDir["BulletRelease"] = "GXSystem/Deps/lib/Bullet/x64/Release"
+libDir["AssimpRelease"] = "GXSystem/Deps/lib/Assimp/x64/Release"
 
 configurations
 {
@@ -77,7 +81,8 @@ project "GXSystem"
     files
     {
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/src/**.cc"
     }
 
     includedirs
@@ -90,7 +95,12 @@ project "GXSystem"
     links
     {
         "SDL2",
-        "SDL2main"
+        "SDL2main",
+        "assimp-vc140-mt",
+        "BulletCollision",
+        "BulletDynamics",
+        "LinearMath"
+
     }
 
     defines
@@ -105,12 +115,26 @@ filter "system:windows"
 
     libdirs
     {
-        "%{libDir.SDL_Windows}"
+        "%{libDir.SDL_Windows}",
+        "%{libDir.BulletDebug}",
+        "%{libDir.AssimpDebug}"
     }
+    runtime "Debug"
+    libdirs
+    {
+        "%{libDir.SDL_Windows}",
+        "%{libDir.BulletRelease}",
+        "%{libDir.AssimpRelease}"
+    }
+    runtime "Release"
+    
+
 
 filter "system:linux"
 
     libdirs
     {
-        "%{libDir.SDL_Linux}"
+        "%{libDir.SDL_Linux}",
+        "%{libDir.Bullet}",
+        "%{libDir.Assimp}"
     }

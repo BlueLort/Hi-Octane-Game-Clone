@@ -20,7 +20,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
@@ -63,15 +63,15 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Deps\lib\SDL2-2.0.16\Windows\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;assimp-vc140-mt.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Deps\lib\Bullet\x64\Debug;Deps\lib\Assimp\x64\Debug;Deps\lib\SDL2-2.0.16\Windows\x64;Deps\lib\Bullet\x64\Release;Deps\lib\Assimp\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -93,24 +93,24 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Deps\lib\SDL2-2.0.16\Windows\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;assimp-vc140-mt.lib;BulletCollision.lib;BulletDynamics.lib;LinearMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Deps\lib\Bullet\x64\Debug;Deps\lib\Assimp\x64\Debug;Deps\lib\SDL2-2.0.16\Windows\x64;Deps\lib\Bullet\x64\Release;Deps\lib\Assimp\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\ECS\Components\Actual\GXGravity.h" />
-    <ClInclude Include="src\ECS\Components\Actual\GXRigidBody.h" />
-    <ClInclude Include="src\ECS\Components\GXComponentArray.h" />
-    <ClInclude Include="src\ECS\ECSManager.h" />
-    <ClInclude Include="src\ECS\Components\GXComponentManager.h" />
-    <ClInclude Include="src\ECS\ECSConfig.h" />
-    <ClInclude Include="src\ECS\Entity\GXEntityManager.h" />
-    <ClInclude Include="src\ECS\Systems\GXEntitySystem.h" />
-    <ClInclude Include="src\ECS\Systems\Actual\GXPhysicsSystem.h" />
-    <ClInclude Include="src\ECS\Systems\GXSystemManager.h" />
-    <ClInclude Include="src\Game\ResourceManager\IOManager.h" />
     <ClInclude Include="src\Config\Config.h" />
     <ClInclude Include="src\Config\pch.h" />
+    <ClInclude Include="src\ECS\Components\Actual\GXGravity.h" />
+    <ClInclude Include="src\ECS\Components\Actual\GXRigidBody.h" />
+    <ClInclude Include="src\ECS\Components\Actual\GXTransform.h" />
+    <ClInclude Include="src\ECS\Components\GXComponentArray.h" />
+    <ClInclude Include="src\ECS\Components\GXComponentManager.h" />
+    <ClInclude Include="src\ECS\ECSConfig.h" />
+    <ClInclude Include="src\ECS\ECSManager.h" />
+    <ClInclude Include="src\ECS\Entity\GXEntityManager.h" />
+    <ClInclude Include="src\ECS\Systems\Actual\GXPhysicsSystem.h" />
+    <ClInclude Include="src\ECS\Systems\GXEntitySystem.h" />
+    <ClInclude Include="src\ECS\Systems\GXSystemManager.h" />
     <ClInclude Include="src\Events\Event.h" />
     <ClInclude Include="src\Events\KeyEvent.h" />
     <ClInclude Include="src\Events\MouseEvent.h" />
@@ -121,24 +121,25 @@
     <ClInclude Include="src\GX\GXTimer.h" />
     <ClInclude Include="src\GX\GXTypes.h" />
     <ClInclude Include="src\GX\GameXApp.h" />
+    <ClInclude Include="src\Game\ResourceManager\IOManager.h" />
     <ClInclude Include="src\Input\GXKeys.h" />
     <ClInclude Include="src\Input\InputManager.h" />
     <ClInclude Include="src\Logging\Logger.h" />
     <ClInclude Include="src\Maths\Data\Vertex3D.h" />
     <ClInclude Include="src\Maths\GXMaths.h" />
-    <ClInclude Include="src\ECS\Components\Actual\GXTransform.h" />
     <ClInclude Include="src\Maths\Random\PerlinNoise.h" />
     <ClInclude Include="src\Platform\GXWindow.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\RendererTypes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Config\pch.cc" />
     <ClCompile Include="src\ECS\Components\GXComponentManager.cc" />
     <ClCompile Include="src\ECS\Entity\GXEntityManager.cc" />
     <ClCompile Include="src\ECS\Systems\Actual\GXPhysicsSystem.cc" />
     <ClCompile Include="src\ECS\Systems\GXSystemManager.cc" />
-    <ClCompile Include="src\Game\ResourceManager\IOManager.cc" />
     <ClCompile Include="src\GX\GameXApp.cpp" />
+    <ClCompile Include="src\Game\ResourceManager\IOManager.cc" />
     <ClCompile Include="src\Game\game.cpp" />
     <ClCompile Include="src\Logging\Logger.cpp" />
     <ClCompile Include="src\Platform\GXWindow.cpp" />
